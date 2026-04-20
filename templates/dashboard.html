@@ -1,0 +1,204 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="dashboard-header">
+    <h2><i class="fas fa-chart-bar"></i> Tableau de Bord</h2>
+    <p>Analyse statistique des données patients</p>
+</div>
+<!-- Recherche -->
+<div class="row mb-4">
+    <div class="col-md-6 mx-auto">
+        <form method="GET" action="/dashboard">
+            <div class="input-group">
+                <input type="text" name="search" class="form-control"
+                placeholder="Rechercher un patient..." value="{{ search }}">
+                <button class="btn btn-primary" type="submit">
+                    <i class="fas fa-search"></i>
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+<!-- Cartes statistiques -->
+<div class="row mb-4">
+    <div class="col-md-3 mb-3">
+        <div class="stat-card p-3 text-center">
+            <i class="fas fa-users fa-2x mb-2"></i>
+            <h3>{{ total }}</h3>
+            <p>Total Patients</p>
+        </div>
+    </div>
+    <div class="col-md-3 mb-3">
+        <div class="stat-card p-3 text-center">
+            <i class="fas fa-birthday-cake fa-2x mb-2"></i>
+            <h3>{{ stats.age_moyen if stats else '--' }}</h3>
+            <p>Âge Moyen</p>
+        </div>
+    </div>
+    <div class="col-md-3 mb-3">
+        <div class="stat-card p-3 text-center">
+            <i class="fas fa-weight fa-2x mb-2"></i>
+            <h3>{{ stats.imc_moyen if stats else '--' }}</h3>
+            <p>IMC Moyen</p>
+        </div>
+    </div>
+    <div class="col-md-3 mb-3">
+        <div class="stat-card p-3 text-center">
+            <i class="fas fa-heartbeat fa-2x mb-2"></i>
+            <h3>{{ stats.douleur_moyenne if stats else '--' }}</h3>
+            <p>Douleur Moyenne</p>
+        </div>
+    </div>
+</div>
+{% if stats %}
+<!-- Quartiles -->
+<div class="row mb-4">
+    <div class="col-md-6 mb-3">
+        <div class="form-card p-3">
+            <h5 class="section-title"><i class="fas fa-chart-line"></i> Quartiles - Âge</h5>
+            <table class="table table-bordered text-center">
+                <thead>
+                    <tr>
+                        <th>Q1</th>
+                        <th>Q2 (Médiane)</th>
+                        <th>Q3</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>{{ stats.q1_age }} ans</td>
+                        <td>{{ stats.q2_age }} ans</td>
+                        <td>{{ stats.q3_age }} ans</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="col-md-6 mb-3">
+        <div class="form-card p-3">
+            <h5 class="section-title"><i class="fas fa-chart-line"></i> Quartiles - IMC</h5>
+            <table class="table table-bordered text-center">
+                <thead>
+                    <tr>
+                        <th>Q1</th>
+                        <th>Q2 (Médiane)</th>
+                        <th>Q3</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>{{ stats.q1_imc }}</td>
+                        <td>{{ stats.q2_imc }}</td>
+                        <td>{{ stats.q3_imc }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<!-- Graphiques -->
+<div class="row mb-4">
+    <div class="col-md-4 mb-3">
+        <div class="form-card p-3">
+            <h5 class="section-title"><i class="fas fa-venus-mars"></i> Répartition Sexe</h5>
+            <canvas id="sexeChart"></canvas>
+        </div>
+    </div>
+    <div class="col-md-4 mb-3">
+        <div class="form-card p-3">
+            <h5 class="section-title"><i class="fas fa-smoking"></i> Tabagisme</h5>
+            <canvas id="tabagismeChart"></canvas>
+        </div>
+    </div>
+    <div class="col-md-4 mb-3">
+        <div class="form-card p-3">
+            <h5 class="section-title"><i class="fas fa-stethoscope"></i> Motifs</h5>
+            <canvas id="motifsChart"></canvas>
+        </div>
+    </div>
+</div>
+{% endif %}
+<!-- Tableau patients -->
+<div class="form-card p-3 mb-4">
+    <h5 class="section-title"><i class="fas fa-list"></i> Liste des Patients</h5>
+    <div class="table-responsive">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>Code</th>
+                    <th>Nom</th>
+                    <th>Prénom</th>
+                    <th>Âge</th>
+                    <th>Sexe</th>
+                    <th>Téléphone</th>
+                    <th>IMC</th>
+                    <th>Tension</th>
+                    <th>Motif</th>
+                    <th>Douleur</th>
+                    <th>Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for p in patients %}
+                <tr>
+                   <td><span class="badge bg-primary">{{ p.code_patient }}</span></td>
+                    <td>{{ p.nom }}</td>
+                    <td>{{ p.prenom }}</td>
+                    <td>{{ p.age }}</td>
+                    <td>{{ p.sexe }}</td>
+                    <td>{{ p.telephone }}</td>
+                    <td>{{ p.imc }}</td>
+                    <td>{{ p.tension }}</td>
+                    <td>{{ p.motif_consultation }}</td>
+                    <td>{{ p.douleur }}/10</td>
+                    <td>{{ p.date_collecte.strftime('%d/%m/%Y') }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% if stats %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+// Graphique Sexe
+new Chart(document.getElementById('sexeChart'), {
+    type: 'pie',
+    data: {
+        labels: ['Hommes', 'Femmes'],
+        datasets: [{
+            data: [{{ stats.hommes }}, {{ stats.femmes }}],
+            backgroundColor: ['#2980b9', '#e74c3c']
+        }]
+    }
+});
+// Graphique Tabagisme
+new Chart(document.getElementById('tabagismeChart'), {
+    type: 'doughnut',
+    data: {
+        labels: ['Fumeurs', 'Non-fumeurs', 'Ex-fumeurs'],
+        datasets: [{
+            data: [{{ stats.fumeurs }}, {{ stats.non_fumeurs }}, {{ stats.ex_fumeurs }}],
+            backgroundColor: ['#e74c3c', '#2ecc71', '#f39c12']
+        }]
+    }
+});
+// Graphique Motifs
+new Chart(document.getElementById('motifsChart'), {
+    type: 'bar',
+    data: {
+        labels: [{% for m, v in stats.motifs.items() %}'{{ m }}',{% endfor %}],
+        datasets: [{
+            label: 'Nombre',
+            data: [{% for m, v in stats.motifs.items() %}{{ v }},{% endfor %}],
+            backgroundColor: '#2980b9'
+        }]
+    },
+    options: {
+        plugins: { legend: { display: false } },
+        scales: { y: { beginAtZero: true } }
+    }
+});
+</script>
+{% endif %}
+{% endblock %} 
+         

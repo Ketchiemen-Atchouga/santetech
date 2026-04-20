@@ -1,0 +1,125 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="page-header">
+    <h2><i class="fas fa-file-medical"></i> Fiche Patient SantéTech</h2>
+</div>
+<div class="row justify-content-center">
+<div class="col-md-10"><div class="form-card p-4">
+<form method="POST">
+  <div class="section-title"><i class="fas fa-id-card"></i> 1. Identification</div>
+  <div class="row">
+    <div class="col-md-4 mb-2"><label class="form-label">Nom</label>
+      <input type="text" name="nom" class="form-control" required></div>
+    <div class="col-md-4 mb-2"><label class="form-label">Prénom</label>
+      <input type="text" name="prenom" class="form-control" required></div>
+    <div class="col-md-4 mb-2"><label class="form-label">Date de naissance</label>
+      <input type="date" name="date_naissance" class="form-control" required></div>
+  </div>
+  <div class="row">
+    <div class="col-md-4 mb-2"><label class="form-label">Âge</label>
+      <input type="number" name="age" class="form-control" required></div>
+    <div class="col-md-4 mb-2"><label class="form-label">Sexe</label>
+      <select name="sexe" class="form-select" required>
+        <option value="">Choisir...</option>
+        <option>Homme</option><option>Femme</option><option>Autre</option>
+      </select></div>
+    <div class="col-md-4 mb-2"><label class="form-label">Téléphone</label>
+      <input type="tel" name="telephone" class="form-control" placeholder="ex: 07 00 00 00 00" required></div>
+  </div>
+  <div class="section-title"><i class="fas fa-heartbeat"></i> 2. Paramètres Vitaux</div>
+  <div class="row">
+    <div class="col-md-3 mb-2"><label class="form-label">Poids (kg)</label>
+      <input type="number" name="poids" id="poids" class="form-control" step="0.1" required oninput="calculerIMC()"></div>
+    <div class="col-md-3 mb-2"><label class="form-label">Taille (cm)</label>
+      <input type="number" name="taille" id="taille" class="form-control" required oninput="calculerIMC()"></div>
+    <div class="col-md-3 mb-2"><label class="form-label">IMC (auto)</label>
+      <div class="imc-display" id="imc-display">--</div>
+      <input type="hidden" name="imc" id="imc"></div>
+    <div class="col-md-3 mb-2"><label class="form-label">Fréquence (bpm)</label>
+      <input type="number" name="frequence_cardiaque" class="form-control"></div>
+  </div>
+  <div class="row">
+    <div class="col-md-4 mb-2"><label class="form-label">Tension (mmHg)</label>
+      <input type="text" name="tension" class="form-control" placeholder="120/80"></div>
+  </div>
+  <div class="section-title"><i class="fas fa-notes-medical"></i> 3. Antécédents</div>
+  <div class="mb-2">
+    <label class="form-label">Antécédents médicaux</label>
+    <div class="d-flex gap-3 flex-wrap">
+      {% for item in ['Hypertension','Diabète','Asthme','Cardiaque'] %}
+      <div class="form-check">
+        <input class="form-check-input" type="checkbox" name="antecedents_medicaux" value="{{ item }}">
+        <label class="form-check-label">{{ item }}</label>
+      </div>
+      {% endfor %}
+    </div>
+    <input type="text" name="antecedents_autre" class="form-control mt-2" placeholder="Autre...">
+  </div>
+  <div class="row">
+    <div class="col-md-4 mb-2"><label class="form-label">Antécédents chirurgicaux</label>
+      <input type="text" name="antecedents_chirurgicaux" class="form-control" placeholder="Intervention et année"></div>
+    <div class="col-md-4 mb-2"><label class="form-label">Allergies</label>
+      <select name="allergies" class="form-select">
+        <option value="">Aucune</option>
+        <option>Pénicilline</option><option>Aspirine</option>
+        <option>Latex</option><option>Arachides</option><option>Autre</option>
+      </select></div>
+    <div class="col-md-4 mb-2"><label class="form-label">Tabagisme</label>
+      <select name="tabagisme" class="form-select">
+        <option value="">Choisir...</option>
+        <option>Fumeur</option><option>Non-fumeur</option><option>Ancien fumeur</option>
+      </select></div>
+  </div>
+  <div class="row">
+    <div class="col-md-4 mb-2"><label class="form-label">Alcool</label>
+      <select name="alcool" class="form-select">
+        <option value="">Choisir...</option>
+        <option>Nulle</option><option>Occasionnelle</option><option>Régulière</option>
+      </select></div>
+  </div>
+  <div class="section-title"><i class="fas fa-stethoscope"></i> 4. Consultation</div>
+  <div class="row">
+    <div class="col-md-6 mb-2"><label class="form-label">Motif principal</label>
+      <select name="motif_consultation" class="form-select">
+        <option value="">Choisir...</option>
+        <option>Fièvre</option><option>Douleur thoracique</option>
+        <option>Maux de tête</option><option>Fatigue</option>
+        <option>Toux</option><option>Douleur abdominale</option><option>Autre</option>
+      </select></div>
+    <div class="col-md-6 mb-2"><label class="form-label">Date des symptômes</label>
+      <input type="date" name="date_symptomes" class="form-control"></div>
+  </div>
+  <div class="mb-2"><label class="form-label">Douleur (0 à 10)</label>
+    <div class="pain-scale">
+      {% for i in range(11) %}
+      <input type="radio" name="douleur" id="d{{ i }}" value="{{ i }}">
+      <label for="d{{ i }}">{{ i }}</label>
+      {% endfor %}
+    </div>
+  </div>
+  <div class="mb-2"><label class="form-label">Traitements en cours</label>
+    <textarea name="traitements_cours" class="form-control" rows="2" placeholder="Médicament et posologie"></textarea></div>
+  <div class="section-title"><i class="fas fa-microscope"></i> 5. Examens</div>
+  <div class="mb-2"><label class="form-label">Examen clinique</label>
+    <textarea name="examen_clinique" class="form-control" rows="2" placeholder="Respiratoire, Cardiaque, Digestif..."></textarea></div>
+  <div class="mb-2"><label class="form-label">Résultats biologiques</label>
+    <textarea name="resultats_biologiques" class="form-control" rows="2" placeholder="ex: Glycémie: 1.2 g/L"></textarea></div>
+  <div class="text-center mt-3">
+    <button type="submit" class="btn btn-primary btn-lg">
+      <i class="fas fa-save"></i> Enregistrer
+    </button>
+  </div>
+</form>
+</div></div></div>
+<script>
+function calculerIMC() {
+  const p = parseFloat(document.getElementById('poids').value);
+  const t = parseFloat(document.getElementById('taille').value) / 100;
+  if (p && t) {
+    const imc = (p / (t * t)).toFixed(2);
+    document.getElementById('imc-display').innerText = imc;
+    document.getElementById('imc').value = imc;
+  }
+}
+</script>
+{% endblock %}

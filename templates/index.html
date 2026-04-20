@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="hero-section text-center py-5">
+    <div class="hero-icon mb-4">
+        <i class="fas fa-heartbeat fa-5x"></i>
+    </div>
+    <h1 class="display-4 fw-bold">Bienvenue sur SantéTech</h1>
+    <p class="lead mt-3">
+        Plateforme intelligente de collecte et suivi
+        des données de santé communautaire
+    </p>
+    <div class="mt-4">
+        <a href="/formulaire" class="btn btn-primary btn-lg me-3">
+            <i class="fas fa-file-medical"></i> Soumettre mes données
+        </a>
+        <a href="/dashboard" class="btn btn-outline-light btn-lg">
+            <i class="fas fa-chart-bar"></i> Voir le Dashboard
+        </a>
+    </div>
+</div>
+<div class="row mt-4">
+    <div class="col-md-4 text-center mb-4">
+        <div class="feature-card p-4">
+            <i class="fas fa-shield-alt fa-3x mb-3"></i>
+            <h4>Sécurisé</h4>
+            <p>Vos données de santé sont protégées et confidentielles</p>
+        </div>
+    </div>
+    <div class="col-md-4 text-center mb-4">
+        <div class="feature-card p-4">
+            <i class="fas fa-bolt fa-3x mb-3"></i>
+            <h4>Rapide</h4>
+            <p>Soumettez vos informations en quelques minutes</p>
+        </div>
+    </div>
+    <div class="col-md-4 text-center mb-4">
+        <div class="feature-card p-4">
+            <i class="fas fa-chart-line fa-3x mb-3"></i>
+            <h4>Analytique</h4>
+            <p>Visualisez les tendances de santé en temps réel</p>
+        </div>
+    </div>
+</div>
+{% endblock %}
