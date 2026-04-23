@@ -2,6 +2,7 @@ from flask import Flask, render_template, request, redirect, url_for, flash
 from database import db, Patient
 import uuid
 import statistics
+import os
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'santetech2024'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///santetech.db'
