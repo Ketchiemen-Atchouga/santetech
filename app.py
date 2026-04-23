@@ -5,7 +5,7 @@ import statistics
 import os
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'santetech2024'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///santetech.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL','sqlite:///santetech.db')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db.init_app(app)
 with app.app_context():
